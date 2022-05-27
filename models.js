@@ -8,6 +8,7 @@ const guestSchema = new mongoose.Schema(
       unique: true,
     },
     other_family: [String],
+    aliases: [String],
     age_range: String,
     attending: Boolean,
     replied: Boolean,

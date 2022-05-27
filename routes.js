@@ -23,12 +23,14 @@ router.post("/guest", async (req, res) => {
   }
 });
 
+// GET ALL GUESTS
 router.get("/guest", async (req, res) => {
   try {
-    console.log("SENDING:", url);
-    res.status(200).send({ msg: "success" });
+    // console.log("SENDING:", url);
+    const guests = await Guest.find({});
+    return res.status(200).send(guests);
   } catch (err) {
-    console.log("ERROR WITH S3:", err);
+    console.log("\n\nERROR GETTING ALL GUESTS:", err);
     res.status(422).send({ msg: "failure" });
   }
 });
