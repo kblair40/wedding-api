@@ -1,0 +1,3 @@
+# Temp storage for mongo password
+ignore.js
+.env
