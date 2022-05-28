@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const mongoPwd = require("./ignore");
+// const mongoPwd = require("./ignore");
 
 require("./models");
 
@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(cors());
 app.use(routes);
 
-const mongoUri = `mongodb+srv://kblair40:${mongoPwd}@cluster0.gwipufa.mongodb.net/?retryWrites=true&w=majority`;
+const mongoUri = `mongodb+srv://kblair40:WpcleYswtGgh9x5e@cluster0.gwipufa.mongodb.net/?retryWrites=true&w=majority`;
 mongoose.connect(mongoUri, { useNewUrlParser: true });
 mongoose.connection.on("connected", () => {
   console.log("CONNECTED TO MONGO INSTANCE");
