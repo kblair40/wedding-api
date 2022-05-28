@@ -41,16 +41,37 @@ const hasOtherFamily = (guest) =>
 const hasSO = (guest) => Boolean(guest && guest.significant_other);
 
 router.get("/guest/byname", async (req, res) => {
-  // console.log("\nREQ:", req);
   const { full_name } = req.query;
-  console.log("FULL NAME:", full_name);
+  console.log("FULL NAME:", full_name, "\n");
 
   let mainGuest = await findGuest(full_name);
+
   if (!mainGuest) {
     return res.status(404).send({ msg: "not found" });
-  } else {
-    return res.status(200).send(mainGuest);
   }
+
+  let family = [];
+  if (hasOtherFamily(mainGuest)) {
+    const { other_family } = mainGuest;
+    console.log("OTHER FAMILY:", other_family);
+
+    for (let name of other_family) {
+      let guest = await findGuest(name);
+      if (guest) family.push(guest);
+    }
+    console.log("\nFAMILY AFTER:", family, "\n");
+  }
+
+  let so;
+  if (hasSO(mainGuest)) {
+    const { significant_other } = mainGuest;
+    // console.log("SIGNIFICANT OTHER:", significant_other);
+
+    so = await findGuest(significant_other);
+  }
+
+  console.log("\n\nRETURNING:", { mainGuest, family, so });
+  return res.status(200).send({ mainGuest, family, so });
 });
 
 const findGuest = async (full_name) => {
