@@ -104,4 +104,31 @@ const findGuest = async (full_name) => {
   return null;
 };
 
+router.patch("/guest/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    special_requests,
+    dinner_selection,
+    dinner_selection_notes,
+    attending,
+  } = req.body;
+
+  try {
+    const foundGuest = await Guest.findById(id);
+
+    foundGuest.special_requests = special_requests;
+    foundGuest.dinner_selection = dinner_selection;
+    foundGuest.dinner_selection_notes = dinner_selection_notes;
+    foundGuest.attending = attending;
+    foundGuest.replied = true;
+
+    await foundGuest.save();
+
+    return res.status(200).send({ msg: "success" });
+  } catch (e) {
+    console.log("FAILED PATCHING GUEST!", e);
+    return res.status(422).send({ msg: "failure" });
+  }
+});
+
 module.exports = router;
