@@ -1,7 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const aliasMap = require("./constants");
-const Guest = mongoose.model("Guest");
+const Invite = mongoose.model("Invite");
 console.log("ALIAS MAP:", aliasMap);
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.post("/guest", async (req, res) => {
   body.replied = false;
 
   try {
-    const guest = new Guest(body);
+    const guest = new Invite(body);
     await guest.save();
 
     // console.log("\n\nBODY:", body, "\n\n");
@@ -24,111 +24,106 @@ router.post("/guest", async (req, res) => {
 });
 
 // GET ALL GUESTS
-router.get("/guest", async (req, res) => {
-  try {
-    // console.log("SENDING:", url);
-    const guests = await Guest.find({});
-    return res.status(200).send(guests);
-  } catch (err) {
-    console.log("\n\nERROR GETTING ALL GUESTS:", err);
-    res.status(422).send({ msg: "failure" });
-  }
-});
+// router.get("/guest", async (req, res) => {
+//   try {
+//     // console.log("SENDING:", url);
+//     const guests = await Invite.find({});
+//     return res.status(200).send(guests);
+//   } catch (err) {
+//     console.log("\n\nERROR GETTING ALL Invites:", err);
+//     res.status(422).send({ msg: "failure" });
+//   }
+// });
 
-const hasOtherFamily = (guest) =>
-  Boolean(guest && guest.other_family && guest.other_family.length);
+// router.get("/guest/byname", async (req, res) => {
+//   const { full_name } = req.query;
+//   console.log("FULL NAME:", full_name, "\n");
 
-const hasSO = (guest) => Boolean(guest && guest.significant_other);
+//   let mainGuest = await findGuest(full_name);
 
-router.get("/guest/byname", async (req, res) => {
-  const { full_name } = req.query;
-  console.log("FULL NAME:", full_name, "\n");
+//   if (!mainGuest) {
+//     return res.status(404).send({ msg: "not found" });
+//   }
 
-  let mainGuest = await findGuest(full_name);
+//   let family = [];
+//   if (hasOtherFamily(mainGuest)) {
+//     const { other_family } = mainGuest;
+//     console.log("OTHER FAMILY:", other_family);
 
-  if (!mainGuest) {
-    return res.status(404).send({ msg: "not found" });
-  }
+//     for (let name of other_family) {
+//       let guest = await findGuest(name);
+//       if (guest) family.push(guest);
+//     }
+//     console.log("\nFAMILY AFTER:", family, "\n");
+//   }
 
-  let family = [];
-  if (hasOtherFamily(mainGuest)) {
-    const { other_family } = mainGuest;
-    console.log("OTHER FAMILY:", other_family);
+//   let so;
+//   if (hasSO(mainGuest)) {
+//     const { significant_other } = mainGuest;
+//     // console.log("SIGNIFICANT OTHER:", significant_other);
 
-    for (let name of other_family) {
-      let guest = await findGuest(name);
-      if (guest) family.push(guest);
-    }
-    console.log("\nFAMILY AFTER:", family, "\n");
-  }
+//     so = await findGuest(significant_other);
+//   }
 
-  let so;
-  if (hasSO(mainGuest)) {
-    const { significant_other } = mainGuest;
-    // console.log("SIGNIFICANT OTHER:", significant_other);
+//   console.log("\n\nRETURNING:", { mainGuest, family, so });
+//   return res.status(200).send({ mainGuest, family, so });
+// });
 
-    so = await findGuest(significant_other);
-  }
+// const findGuest = async (full_name) => {
+//   let foundGuest;
+//   try {
+//     foundGuest = await Guest.findOne({ full_name });
+//     console.log("FOUND GUEST:", foundGuest);
 
-  console.log("\n\nRETURNING:", { mainGuest, family, so });
-  return res.status(200).send({ mainGuest, family, so });
-});
+//     if (foundGuest) {
+//       return foundGuest;
+//     } else {
+//       const alias = aliasMap[full_name];
+//       if (!alias) {
+//         return null;
+//       }
 
-const findGuest = async (full_name) => {
-  let foundGuest;
-  try {
-    foundGuest = await Guest.findOne({ full_name });
-    console.log("FOUND GUEST:", foundGuest);
+//       try {
+//         foundGuest = await Guest.findOne({ full_name: alias });
+//         console.log("FOUND GUEST:", foundGuest);
 
-    if (foundGuest) {
-      return foundGuest;
-    } else {
-      const alias = aliasMap[full_name];
-      if (!alias) {
-        return null;
-      }
+//         return foundGuest ? foundGuest : null;
+//       } catch (e) {
+//         // also unable to find using alias
+//         return null;
+//       }
+//     }
+//   } catch (e) {
+//     console.log("ERROR WHILE FETCHING GUEST:", e);
+//   }
+//   return null;
+// };
 
-      try {
-        foundGuest = await Guest.findOne({ full_name: alias });
-        console.log("FOUND GUEST:", foundGuest);
+// router.patch("/guest/:id", async (req, res) => {
+//   const { id } = req.params;
+//   const {
+//     special_requests,
+//     dinner_selection,
+//     dinner_selection_notes,
+//     attending,
+//   } = req.body;
 
-        return foundGuest ? foundGuest : null;
-      } catch (e) {
-        // also unable to find using alias
-        return null;
-      }
-    }
-  } catch (e) {
-    console.log("ERROR WHILE FETCHING GUEST:", e);
-  }
-  return null;
-};
+//   try {
+//     const foundGuest = await Guest.findById(id);
 
-router.patch("/guest/:id", async (req, res) => {
-  const { id } = req.params;
-  const {
-    special_requests,
-    dinner_selection,
-    dinner_selection_notes,
-    attending,
-  } = req.body;
+//     foundGuest.special_requests = special_requests;
+//     foundGuest.dinner_selection = dinner_selection;
+//     foundGuest.dinner_selection_notes = dinner_selection_notes;
+//     foundGuest.attending = attending;
+//     foundGuest.replied = true;
 
-  try {
-    const foundGuest = await Guest.findById(id);
+//     await foundGuest.save();
 
-    foundGuest.special_requests = special_requests;
-    foundGuest.dinner_selection = dinner_selection;
-    foundGuest.dinner_selection_notes = dinner_selection_notes;
-    foundGuest.attending = attending;
-    foundGuest.replied = true;
-
-    await foundGuest.save();
-
-    return res.status(200).send({ msg: "success" });
-  } catch (e) {
-    console.log("FAILED PATCHING GUEST!", e);
-    return res.status(422).send({ msg: "failure" });
-  }
-});
+//     return res.status(200).send({ msg: "success" });
+//   } catch (e) {
+//     console.log("FAILED PATCHING GUEST!", e);
+//     return res.status(422).send({ msg: "failure" });
+//   }
+// });
 
 module.exports = router;

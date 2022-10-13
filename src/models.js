@@ -1,27 +1,27 @@
 const mongoose = require("mongoose");
 
-const guestSchema = new mongoose.Schema(
+const inviteSchema = new mongoose.Schema(
   {
-    full_name: {
-      type: String,
+    invited_names: {
+      type: [String],
       required: true,
-      unique: true,
     },
-    other_family: [String],
-    aliases: [String],
-    age_range: String,
-    attending: Boolean,
-    replied: Boolean,
-    dinner_selection: String,
-    dinner_selection_notes: String,
+    attending_names: [String],
+    not_attending_names: [String],
+    replied: {
+      type: Boolean,
+      default: false,
+    },
+    reply_method: {
+      type: String,
+      enum: ["website", "email"],
+    },
     email: String,
-    phone_number: String,
-    plus_one: String,
-    side: String,
-    significant_other: String,
+    plus_one: Boolean,
+    plus_one_attending: Boolean,
     special_requests: String,
   },
   { timestamps: true }
 );
 
-mongoose.model("Guest", guestSchema);
+mongoose.model("Invite", inviteSchema);
