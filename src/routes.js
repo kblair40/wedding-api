@@ -152,9 +152,15 @@ router.get("/search", async (req, res) => {
           invited_names: 1,
           attending_names: 1,
           not_attending_names: 1,
+          replied: 1,
+          reply_method: 1,
+          plus_one: 1,
+          plus_one_attending: 1,
+          special_requests: 1,
           _id: 1,
         },
       },
+      // add sorting by match "score", somehow
       {
         $limit: 7,
       },
