@@ -2,12 +2,19 @@ const mongoose = require("mongoose");
 
 const inviteSchema = new mongoose.Schema(
   {
+    invite_label: String,
     invited_names: {
       type: [String],
       required: true,
     },
-    attending_names: [String],
-    not_attending_names: [String],
+    attending_names: {
+      type: [String],
+      default: [],
+    },
+    not_attending_names: {
+      type: [String],
+      default: [],
+    },
     replied: {
       type: Boolean,
       default: false,

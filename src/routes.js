@@ -25,16 +25,16 @@ router.post("/guest", async (req, res) => {
 });
 
 // GET ALL GUESTS
-// router.get("/guest", async (req, res) => {
-//   try {
-//     // console.log("SENDING:", url);
-//     const guests = await Invite.find({});
-//     return res.status(200).send(guests);
-//   } catch (err) {
-//     console.log("\n\nERROR GETTING ALL Invites:", err);
-//     res.status(422).send({ msg: "failure" });
-//   }
-// });
+router.get("/invites", async (req, res) => {
+  try {
+    // console.log("SENDING:", url);
+    const invites = await Invite.find({});
+    return res.status(200).send(invites);
+  } catch (err) {
+    console.log("\n\nERROR GETTING ALL Invites:", err);
+    return res.status(422).send([]);
+  }
+});
 
 // router.get("/guest/byname", async (req, res) => {
 //   const { full_name } = req.query;
