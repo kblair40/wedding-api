@@ -142,7 +142,6 @@ router.get("/search", async (req, res) => {
             query: name,
             path: "invited_names",
             tokenOrder: "sequential",
-            fuzzy: {},
           },
         },
       },
