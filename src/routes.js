@@ -100,32 +100,41 @@ router.get("/invites", async (req, res) => {
 //   return null;
 // };
 
-// router.patch("/guest/:id", async (req, res) => {
-//   const { id } = req.params;
-//   const {
-//     special_requests,
-//     dinner_selection,
-//     dinner_selection_notes,
-//     attending,
-//   } = req.body;
+router.patch("/invite/:id", async (req, res) => {
+  const { id } = req.params;
+  const {
+    not_attending_names,
+    attending_names,
+    special_requests,
+    reply_method,
+  } = req.body;
 
-//   try {
-//     const foundGuest = await Guest.findById(id);
+  try {
+    const foundInvite = await Invite.findById(id);
 
-//     foundGuest.special_requests = special_requests;
-//     foundGuest.dinner_selection = dinner_selection;
-//     foundGuest.dinner_selection_notes = dinner_selection_notes;
-//     foundGuest.attending = attending;
-//     foundGuest.replied = true;
+    if (special_requests) {
+      foundInvite.special_requests = special_requests;
+    }
+    if (attending_names) {
+      foundInvite.attending_names = attending_names;
+    }
+    if (not_attending_names) {
+      foundInvite.not_attending_names = not_attending_names;
+    }
+    if (reply_method) {
+      foundInvite.reply_method = reply_method;
+    }
 
-//     await foundGuest.save();
+    foundInvite.replied = true;
 
-//     return res.status(200).send({ msg: "success" });
-//   } catch (e) {
-//     console.log("FAILED PATCHING GUEST!", e);
-//     return res.status(422).send({ msg: "failure" });
-//   }
-// });
+    await foundInvite.save();
+
+    return res.status(200).send({ msg: "success" });
+  } catch (e) {
+    console.log("FAILED PATCHING GUEST!", e);
+    return res.status(422).send({ msg: "failure" });
+  }
+});
 
 router.get("/search", async (req, res) => {
   const { name } = req.query;
