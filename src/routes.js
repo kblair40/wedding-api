@@ -127,4 +127,112 @@ router.get("/invites", async (req, res) => {
 //   }
 // });
 
+router.get("/search", async (req, res) => {
+  const { name } = req.query;
+  console.log("NAME:", name);
+
+  if (!name) return res.status(422).send({ error: "No name provided" });
+
+  try {
+    let results = await Invite.aggregate([
+      {
+        $search: {
+          index: "default",
+          autocomplete: {
+            query: name,
+            path: "invited_names",
+            tokenOrder: "sequential",
+            fuzzy: {},
+          },
+        },
+      },
+      {
+        $project: {
+          invite_label: 1,
+          invited_names: 1,
+          attending_names: 1,
+          not_attending_names: 1,
+          _id: 1,
+        },
+      },
+      {
+        $limit: 7,
+      },
+    ]);
+    console.log("FOUND USERS:", results);
+
+    if (results) {
+      console.log("\nRESULTS:", results, "\n\n\n\n");
+      return res.status(200).send(results);
+    } else {
+      return res.send([]);
+    }
+  } catch (e) {
+    console.log("FAILED TO FIND USERS:", e);
+    return res.status(404).send({ error: "Failed to find users" });
+  }
+});
+
 module.exports = router;
+
+// {
+//   "mappings": {
+//     "dynamic": false,
+//     "fields": {
+//       "username": [
+//         {
+//           "foldDiacritics": false,
+//           "maxGrams": 7,
+//           "minGrams": 3,
+//           "tokenization": "edgeGram",
+//           "type": "autocomplete"
+//         }
+//       ]
+//     }
+//   }
+// }
+
+// BACKUP
+// try {
+//   let results = await Invite.aggregate([
+//     {
+//       $search: {
+//         index: "default",
+//         autocomplete: {
+//           query: name,
+//           path: "username",
+//           tokenOrder: "sequential",
+//           fuzzy: {},
+//         },
+//       },
+//     },
+//     {
+//       $project: {
+//         username: 1,
+//         avatar_image_url: 1,
+//         _id: 1,
+//       },
+//     },
+//     {
+//       $limit: 5,
+//     },
+//   ]);
+//   console.log("FOUND USERS:", results);
+
+//   if (results) {
+//     results = results.filter((result) => {
+//       console.log("\n\nRESULT:", result, "\n");
+//       let isBlockedByRequester =
+//         user.blocked_ids.includes(result._id) ||
+//         user.blocked_by_ids.includes(result._id);
+//       return !isBlockedByRequester;
+//     });
+//     console.log("\nFILTERED RESULTS:", results, "\n\n\n\n");
+//     return res.status(200).send(results);
+//   } else {
+//     return res.send([]);
+//   }
+// } catch (e) {
+//   console.log("FAILED TO FIND USERS:", e);
+//   return res.status(404).send({ error: "Failed to find users" });
+// }

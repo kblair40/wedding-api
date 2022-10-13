@@ -4,7 +4,7 @@ const inviteSchema = new mongoose.Schema(
   {
     invite_label: String,
     invited_names: {
-      type: [String],
+      type: String,
       required: true,
     },
     attending_names: {
