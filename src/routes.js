@@ -170,7 +170,7 @@ router.get("/search", async (req, res) => {
       },
       // add sorting by match "score", somehow
       {
-        $limit: 7,
+        $limit: 9,
       },
     ]);
     console.log("FOUND USERS:", results);
