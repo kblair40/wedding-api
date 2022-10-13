@@ -14,7 +14,7 @@ const inviteSchema = new mongoose.Schema(
     },
     reply_method: {
       type: String,
-      enum: ["website", "email"],
+      enum: ["website", "email", ""],
     },
     email: String,
     plus_one: Boolean,
