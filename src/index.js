@@ -28,7 +28,7 @@ mongoose.connection.on("error", (err) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("TEST PASSED!");
+  res.status(200).send("200 - OK");
 });
 
 app.listen(process.env.PORT || 3001, () => console.log("Server is running..."));
