@@ -2,7 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 require("dotenv").config();
-// const mongoPwd = require("./ignore");
+
+// APP NAME = DRY-CHAMBER-32067
 
 const MONGO_PASSWORD = process.env.MONGO_PASSWORD;
 
